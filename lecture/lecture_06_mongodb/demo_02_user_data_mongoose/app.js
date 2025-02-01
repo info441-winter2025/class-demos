@@ -2,8 +2,10 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+import models from './models.js';
 
 import usersRouter from './routes/users.js';
+import apiRouter from './routes/api.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -19,26 +21,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(function(req, res, next){
-    console.log("this is middleware 1, first part", req, res);
+app.use((req, res, next) => {
+    req.models = models;
     next();
-    console.log("this is middleware 1, second part", req, res);
 })
-app.use(function(req, res, next){
-    console.log("this is middleware 2, first part", req, res);
-   req.testVal = 3;
-    next();
-    console.log("this is middleware 2, second part", req, res);
-})
-app.use(function(req, res, next){
-    console.log("this is middleware 3, first part",req.testVal);
-    next();
-    console.log("this is middleware 3, second part", req, res);
-})
-
-
-
 
 app.use('/users', usersRouter);
+app.use('/api', apiRouter);
 
 export default app;
