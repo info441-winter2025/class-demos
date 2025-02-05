@@ -46,7 +46,8 @@ app.get('/', (req, res) => {
   res.send(`
   <html><body>
   <h1> demo for xss escaping</h1>
-
+  ${notVulnerableAddUserInput()}
+  
   <h2> vulnerable user input </h2>
   ${vulnerableAddUserInput()}
   
