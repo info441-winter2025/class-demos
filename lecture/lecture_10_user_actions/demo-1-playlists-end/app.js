@@ -2,9 +2,8 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import sessions from 'express-session';
-
-import usersRouter from './routes/users.js';
+import apiv1Router from './route/api/v1/apiv1.js'
+import models from './models.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -20,19 +19,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const oneDay = 1000 * 60 * 60 * 24;
+app.use((req, res, next) => {
+    req.models = models
+    next()
+})
 
-app.use(sessions({
-    secret: "my secret is super secret lkadsglkjah",
-    saveUninitialized: true,
-<<<<<<< HEAD
-    cookies: {maxAge: oneDay},
-=======
-    cookie: {maxAge: oneDay},
->>>>>>> refs/remotes/origin/main
-    resave: false
-}))
-
-app.use('/users', usersRouter);
+app.use('/api/v1', apiv1Router)
 
 export default app;
