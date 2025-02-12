@@ -17,4 +17,12 @@ models.User = mongoose.model("User", userSchema);
 
 console.log("user schema created");
 
+const playlistsSchema = new mongoose.Schema({
+    title: String,
+    songs: String,
+    user: {type:mongoose.Schema.Types.ObjectId, ref: "User"}
+})
+
+models.Playlist = mongoose.model("Playlist", playlistsSchema);
+
 export default models;

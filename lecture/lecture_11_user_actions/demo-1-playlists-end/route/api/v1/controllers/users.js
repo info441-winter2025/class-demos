@@ -23,8 +23,6 @@ router.post("/", async(req, res) => {
         console.log("error", err)
         res.status(500).json({status: "error"})
     }
-
-    //console.log("We are posting stuff")
 })
 
 router.post('/bands', async(req, res) => {
@@ -41,6 +39,22 @@ router.post('/bands', async(req, res) => {
     }
     await user.save();
     res.json({status: "success"})
+})
+
+router.delete("/", async(req, res) => {
+    try {
+        console.log("deleting, ", req)
+
+        let userId = req.body.userId;
+
+        // delete all playlists for user, THEN delete user
+        await req.models.Playlist.deleteMany({user: userId});
+        await req.models.User.deleteOne({_id: userId});
+        res.json({status: "success"})
+    } catch (err) {
+        console.log("error", err)
+        res.status(500).json({status: "error"})
+    }
 })
 
 export default router;
