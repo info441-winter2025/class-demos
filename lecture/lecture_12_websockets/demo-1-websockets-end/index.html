@@ -1,9 +1,18 @@
 <html>
 <head>
     <script>
+        const socketUrl = "ws://localhost:3000/chatSocket";
+        let websocket = new WebSocket(socketUrl);
+
         function sendChat() {
-            alert("TODO: Send chat")
+            let chatMsg = document.getElementById("textInput").value;
+            websocket.send(chatMsg);
         }
+        websocket.onmessage = event => {
+            const msg = event.data;
+            document.getElementById("output").innerText += msg + "\n"
+        }
+
     </script>
 </head>
 <body>
