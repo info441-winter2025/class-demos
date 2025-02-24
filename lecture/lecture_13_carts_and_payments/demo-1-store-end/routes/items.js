@@ -57,7 +57,7 @@ async function calculateOrderAmount(req){
     // combine with price info
     let combinedCartInfo = await addPricesToCart(cartInfo, req.models)
     //calculate and return total cost
-    let totalCost = await combinedCartInfo.map(item => item.price +item.itemCount).reduce((prev, curr) => prev + curr)
+    let totalCost = await combinedCartInfo.map(item => item.price * item.itemCount).reduce((prev, curr) => prev + curr)
     return totalCost;
 }
 
