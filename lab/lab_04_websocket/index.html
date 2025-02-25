@@ -2,6 +2,24 @@
     <head>
         <script>
             // TODO: add WebSocket connection
+            const socketURL = 'ws://localhost:3000/socket';
+            let webSocket = new WebSocket(socketURL);
+
+            function sendChat() {
+                let message = document.getElementById('textInput').value;
+                webSocket.send(JSON.stringify({ action: 'sendMessage', message }));
+            }
+            
+            function updateName() {
+                let name = document.getElementById('nameInput').value;
+                webSocket.send(JSON.stringify({ action: 'updateName', name }));
+                document.getElementById('currentName').innerText = `Your Name: ${name}`;
+            }
+
+            webSocket.onmessage = (event) => {
+                const msg = event.data;
+                document.getElementById('output').innerText += msg + '\n';
+            }
         </script>
     </head>
     <body>
