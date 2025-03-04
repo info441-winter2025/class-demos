@@ -2,7 +2,7 @@
 
 **NOTE: If you are unsure JUST COPY THE FILES IN THIS DEMO!!!** This includes big folders like `bin` and `node_modules`
 
-Essentially this strategy is just copying the front-end react code to the backend serverside code every single time a request or something gets changed in terms of front end.
+Essentially this strategy is just copying the front-end react code to the backend serverside code every single time you change something in the front end react. In other words, this is everything you would write in the `public ` folder of websharer. e.g. when a handler, endpoint, or some utils function gets changed or added in terms of front end. 
 
 ### Frontend (react): 
 
