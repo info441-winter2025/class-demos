@@ -5,7 +5,7 @@ import logger from "morgan";
 import sessions from "express-session";
 
 import WebAppAuthProvider from "msal-node-wrapper";
-import userRouter from "./users.js";
+import userRouter from "./routes/users.js";
 
 const authConfig = {
   auth: {
