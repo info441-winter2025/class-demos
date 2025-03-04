@@ -1,55 +1,21 @@
 import React, { useEffect, useState } from "react";
+import Welcome from "./components/Welcome";
+import Identity from "./components/Identity";
 import "./styles.css";
 
+// NOTE: using function components to control state of app and NOT class components
+// CSE 331 class uses class components, but functions work too
 function App() {
-  const [user, setUser] = useState(null); // State to track logged-in user
-
-  // 🔹 Fetch user identity on page load
-  useEffect(() => {
-    async function checkLoginStatus() {
-      try {
-        let response = await fetch("/users/myIdentity"); // Calls Express backend
-        let identity = await response.json();
-
-        if (identity.status === "loggedin") {
-          setUser(identity.userInfo); // Store user info in state
-        }
-      } catch (error) {
-        console.error("Error fetching user identity:", error);
-      }
-    }
-
-    checkLoginStatus();
-  }, []);
-
-  // 🔹 Redirects to Express authentication
-  const handleLogin = () => {
-    window.location.href = "/signin"; // Redirects to Express' authentication route
-  };
-
-  // 🔹 Logs out the user
-  const handleLogout = () => {
-    window.location.href = "/signout"; // Redirects to Express' logout route
-  };
+  // KEY POINT HERE!!!
+  // using useState to store user info and pass it to the Welcome component
+  // (and other components if you add them later)
+  const [user, setUser] = useState(null);
 
   return (
     <div className="container">
       <h1 className="title">Simple React App</h1>
-
-      {user ? (
-        <>
-          <p>
-            Welcome, {user.name} ({user.username})
-          </p>
-          <button className="logout-button" onClick={handleLogout}>
-            LOGOUT
-          </button>
-        </>
-      ) : (
-        <button className="login-button" onClick={handleLogin}>
-          LOGIN
-        </button>
-      )}
+      <Welcome user={user} />
+      <Identity onUserFetched={setUser} />
     </div>
   );
 }
