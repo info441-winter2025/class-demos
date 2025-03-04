@@ -5,26 +5,7 @@ import logger from "morgan";
 import sessions from "express-session";
 
 import WebAppAuthProvider from "msal-node-wrapper";
-
-const authConfig = {
-  auth: {
-    clientId: "Client ID or Application ID HERE",
-    authority:
-      "https://login.microsoftonline.com/Paste_the_Tenant_directory_ID_Here",
-    clientSecret:
-      "Client or Application secret here (NOT THE 'secret id', but the 'secret value')",
-    redirectUri: "/redirect",
-  },
-  system: {
-    loggerOptions: {
-      loggerCallback(loglevel, message, containsPii) {
-        console.log(message);
-      },
-      piiLoggingEnabled: false,
-      logLevel: 3,
-    },
-  },
-};
+import userRouter from "./users.js";
 
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -40,7 +21,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public/build")));
 
 const oneDay = 1000 * 60 * 60 * 24;
 app.use(
@@ -59,6 +40,8 @@ const authProvider = await WebAppAuthProvider.WebAppAuthProvider.initialize(
 
 app.use(authProvider.authenticate());
 
+app.use("/users", userRouter);
+
 app.get("/signin", (req, res, next) => {
   return req.authContext.login({
     postLoginRedirectUri: "/", // redirect here after login
@@ -69,6 +52,14 @@ app.get("/signout", (req, res, next) => {
     postLogoutRedirectUri: "/", // redirect here after logout
   })(req, res, next);
 });
+
+// Serve React Frontend
+app.use(express.static(path.join(__dirname, "public/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/build", "index.html"));
+});
+
 app.use(authProvider.interactionErrorHandler());
 
 export default app;
