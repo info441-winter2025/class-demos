@@ -1,8 +1,37 @@
 import express from 'express';
+import cache from 'memory-cache';
+
 var router = express.Router();
 
-router.get("/", async(req, res) => {
+// artificially slow db lookup function, to mimic large queries or long time to query
+async function getItemsSlow(req) {
     let allItems = await req.models.Item.find()
+
+    // pause for 5 seconds to pretend this was a difficult query
+    let sleepSeconds = 5;
+    await new Promise(r => setTimeout(r, sleepSeconds * 1000))
+
+    return allItems;
+}
+
+router.get("/", async(req, res) => {
+  // TODO: PUT THIS BACK AFTER TESTING!!!!!!
+  //  let allItems = await req.models.Item.find()
+
+  console.log('first check cache');
+   let allItems = cache.get('allItems');
+   if (allItems){
+    console.log('cache hit!')
+   } else {
+    console.log('cache miss, doing the slow db query')
+    allItems = await getItemsSlow(req);
+    console.log('found items in db, saving to cache');
+    cache.put('allItems', allItems, 30 * 1000);
+   }
+
+   // TODO: put this back for whole app caching, after understanding server side caching
+   // res.set('Cache-Control', 'public, max-age=30')
+
     res.json(allItems)
 })
 
