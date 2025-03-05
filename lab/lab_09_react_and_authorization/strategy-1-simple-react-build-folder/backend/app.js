@@ -5,6 +5,7 @@ import logger from "morgan";
 import sessions from "express-session";
 
 import WebAppAuthProvider from "msal-node-wrapper";
+import userRouter from "./routes/users.js";
 
 const authConfig = {
   auth: {
@@ -40,7 +41,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public/build")));
 
 const oneDay = 1000 * 60 * 60 * 24;
 app.use(
@@ -59,6 +60,8 @@ const authProvider = await WebAppAuthProvider.WebAppAuthProvider.initialize(
 
 app.use(authProvider.authenticate());
 
+app.use("/users", userRouter);
+
 app.get("/signin", (req, res, next) => {
   return req.authContext.login({
     postLoginRedirectUri: "/", // redirect here after login
@@ -69,6 +72,14 @@ app.get("/signout", (req, res, next) => {
     postLogoutRedirectUri: "/", // redirect here after logout
   })(req, res, next);
 });
+
+// Serve React Frontend
+app.use(express.static(path.join(__dirname, "public/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/build", "index.html"));
+});
+
 app.use(authProvider.interactionErrorHandler());
 
 export default app;
